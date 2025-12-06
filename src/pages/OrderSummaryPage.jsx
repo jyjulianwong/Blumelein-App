@@ -60,10 +60,10 @@ const OrderSummaryPage = () => {
 
   const seoConfig = getSEOConfig('orderSummary');
   const orderStructuredData = order ? generateOrderStructuredData({
-    orderId: order.orderId,
-    orderDate: order.createdAt,
-    customerName: order.buyerFullName,
-    customerEmail: order.buyerEmail,
+    orderId: order.order_id,
+    orderDate: order.created_at,
+    customerName: order.buyer_full_name,
+    customerEmail: order.buyer_email,
     totalAmount: calculateTotal(),
   }) : null;
 
@@ -104,7 +104,7 @@ const OrderSummaryPage = () => {
     <>
       <SEO 
         {...seoConfig} 
-        title={`Order #${order.orderId.substring(0, 8)} Confirmation`}
+        title={`Order #${order.order_id.substring(0, 8)} Confirmation`}
         structuredData={orderStructuredData}
       />
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
