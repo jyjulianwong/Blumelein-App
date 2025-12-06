@@ -24,7 +24,7 @@ const SEO = ({
   structuredData,
 }) => {
   const siteTitle = 'Blumelein';
-  const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
+  const fullTitle = title ? `${siteTitle} – ${title}` : siteTitle;
   
   // Default image if none provided
   const defaultImage = `${window.location.origin}/og-image.jpg`;
