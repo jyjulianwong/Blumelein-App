@@ -12,42 +12,42 @@ export const SEO_CONFIG = {
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
-      name: 'Blumelein',
-      description: 'Fresh flower delivery and custom bouquet creation service',
-      url: window.location.origin,
-      priceRange: '$$',
-      image: `${window.location.origin}/og-image.jpg`,
-      telephone: '+1-XXX-XXX-XXXX', // Update with real phone
-      address: {
+      'name': 'Blumelein',
+      'description': 'Fresh flower delivery and custom bouquet creation service',
+      'url': window.location.origin,
+      'priceRange': '$$',
+      'image': `${window.location.origin}/og-image.jpg`,
+      'telephone': '+1-XXX-XXX-XXXX', // Update with real phone
+      'address': {
         '@type': 'PostalAddress',
-        streetAddress: 'Your Street Address',
-        addressLocality: 'Your City',
-        addressRegion: 'Your State',
-        postalCode: 'Your Zip',
-        addressCountry: 'US',
+        'streetAddress': 'Your Street Address',
+        'addressLocality': 'Your City',
+        'addressRegion': 'Your State',
+        'postalCode': 'Your Zip',
+        'addressCountry': 'US',
       },
-      openingHoursSpecification: [
+      'openingHoursSpecification': [
         {
           '@type': 'OpeningHoursSpecification',
-          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-          opens: '09:00',
-          closes: '18:00',
+          'dayOfWeek': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          'opens': '09:00',
+          'closes': '18:00',
         },
       ],
-      aggregateRating: {
+      'aggregateRating': {
         '@type': 'AggregateRating',
-        ratingValue: '4.8',
-        reviewCount: '127',
+        'ratingValue': '4.8',
+        'reviewCount': '127',
       },
     },
   },
-  
+
   basket: {
     title: 'Your Basket',
     description: 'Review your selected flowers and bouquets before checkout. Modify quantities, adjust your order, and prepare for a beautiful delivery.',
     keywords: 'shopping cart, flower basket, order review, checkout',
   },
-  
+
   checkout: {
     title: 'Checkout',
     description: 'Complete your flower order with secure payment. Enter delivery details and finalize your beautiful bouquet purchase.',
@@ -55,11 +55,11 @@ export const SEO_CONFIG = {
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'CheckoutPage',
-      name: 'Blumelein Checkout',
-      description: 'Secure checkout for flower delivery',
+      'name': 'Blumelein Checkout',
+      'description': 'Secure checkout for flower delivery',
     },
   },
-  
+
   orderSummary: {
     title: 'Order Confirmation',
     description: 'Your flower order has been confirmed! View your order details, delivery information, and estimated arrival time.',
@@ -67,8 +67,8 @@ export const SEO_CONFIG = {
     structuredData: {
       '@context': 'https://schema.org',
       '@type': 'Order',
-      name: 'Blumelein Order',
-      description: 'Order confirmation and details',
+      'name': 'Blumelein Order',
+      'description': 'Order confirmation and details',
     },
   },
 };
@@ -90,15 +90,15 @@ export const getSEOConfig = (page) => {
 export const generateProductStructuredData = (product) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',
-  name: product.name,
-  description: product.description || `Beautiful ${product.name} from Blumelein`,
-  image: product.image || `${window.location.origin}/og-image.jpg`,
-  offers: {
+  'name': product.name,
+  'description': product.description || `Beautiful ${product.name} from Blumelein`,
+  'image': product.image || `${window.location.origin}/og-image.jpg`,
+  'offers': {
     '@type': 'Offer',
-    price: product.price,
-    priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock',
-    url: window.location.href,
+    'price': product.price,
+    'priceCurrency': 'USD',
+    'availability': 'https://schema.org/InStock',
+    'url': window.location.href,
   },
 });
 
@@ -110,18 +110,18 @@ export const generateProductStructuredData = (product) => ({
 export const generateOrderStructuredData = (order) => ({
   '@context': 'https://schema.org',
   '@type': 'Order',
-  orderNumber: order.orderId,
-  orderStatus: 'https://schema.org/OrderProcessing',
-  orderDate: order.orderDate || new Date().toISOString(),
-  customer: {
+  'orderNumber': order.orderId,
+  'orderStatus': 'https://schema.org/OrderProcessing',
+  'orderDate': order.orderDate || new Date().toISOString(),
+  'customer': {
     '@type': 'Person',
-    name: order.customerName,
-    email: order.customerEmail,
+    'name': order.customerName,
+    'email': order.customerEmail,
   },
-  acceptedOffer: {
+  'acceptedOffer': {
     '@type': 'Offer',
-    price: order.totalAmount,
-    priceCurrency: 'USD',
+    'price': order.totalAmount,
+    'priceCurrency': 'USD',
   },
 });
 

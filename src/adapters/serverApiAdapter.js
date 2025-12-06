@@ -14,14 +14,14 @@ class ServerApiAdapter {
    */
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
-    
+
     // Debug logging
     console.log('🚀 Making API request:', {
       url,
       method: options.method || 'GET',
       baseUrl: this.baseUrl,
     });
-    
+
     const defaultHeaders = {
       'Content-Type': 'application/json',
     };
@@ -36,13 +36,13 @@ class ServerApiAdapter {
 
     try {
       const response = await fetch(url, fetchOptions);
-      
+
       console.log('📥 API response received:', {
         status: response.status,
         statusText: response.statusText,
         url: response.url,
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);

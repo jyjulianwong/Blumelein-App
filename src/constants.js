@@ -1,10 +1,10 @@
 /**
  * Business Constants
- * 
+ *
  * This file contains all business-related constants such as contact information,
  * policy notes, and other static content that may need to be updated as the
  * business evolves.
- * 
+ *
  * Centralizing these values makes it easy to:
  * - Update business information in one place
  * - Maintain consistency across the app

@@ -1,23 +1,83 @@
 module.exports = {
-  root: true,
-  env: { browser: true, es2020: true },
+  env: {
+    browser: true,
+    node: true,
+  },
   extends: [
+    'google', 
     'eslint:recommended',
+    'plugin:import/recommended',
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
+    'plugin:tailwindcss/recommended',
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  plugins: ['unused-imports'],
+  ignorePatterns: ['/dist/*', '.eslintrc.cjs'],
   parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
   settings: { react: { version: '18.2' } },
-  plugins: ['react-refresh'],
   rules: {
-    'react-refresh/only-export-components': [
-      'warn',
-      { allowConstantExport: true },
+    // Disable conflicting rules from google style
+    'require-jsdoc': 'off',
+    'valid-jsdoc': 'off',
+    // Enforce Google style specifics
+    'indent': ['error', 2],
+    'max-len': ['error', { code: 100 }],
+    'semi': [2, 'always'],
+    'object-curly-spacing': ['error', 'always'],
+    'comma-dangle': ['error', 'always-multiline'],
+    'quote-props': ['error', 'consistent'],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'error',
+    'unused-imports/no-unused-vars': [
+      'error',
+      {
+        'vars': 'all',
+        'varsIgnorePattern': '^_',
+        'args': 'after-used',
+        'argsIgnorePattern': '^_',
+      },
     ],
-    'react/prop-types': 'off',
+    'import/newline-after-import': ['error', { 'count': 1 }],
+    'import/order': [
+      1,
+      {
+        'groups': [
+          'external',
+          'builtin',
+          'internal',
+          'sibling',
+          'parent',
+          'index',
+        ],
+        'pathGroups': [
+          {
+            'pattern': 'components',
+            'group': 'internal',
+          },
+          {
+            'pattern': 'common',
+            'group': 'internal',
+          },
+          {
+            'pattern': 'routes/ **',
+            'group': 'internal',
+          },
+          {
+            'pattern': 'assets/**',
+            'group': 'internal',
+            'position': 'after',
+          },
+        ],
+        'pathGroupsExcludedImportTypes': ['internal'],
+        'alphabetize': {
+          'order': 'asc',
+          'caseInsensitive': true,
+        },
+      },
+    ],
+    'tailwindcss/classnames-order': ['error'],
+    'spaced-comment': ['error', 'always', { 'markers': ['/'] }],
   },
-}
-
-
+};

@@ -27,7 +27,7 @@ console.log('⚙️ Config loaded:', {
     VITE_CLIENT_BASE_PATH: import.meta.env.VITE_CLIENT_BASE_PATH,
     VITE_SERVER_API_BASE_URL: import.meta.env.VITE_SERVER_API_BASE_URL,
     mode: import.meta.env.MODE,
-  }
+  },
 });
 
 // Validation

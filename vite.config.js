@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 
 /**
  * Remove trailing slash from a path string
@@ -19,4 +19,4 @@ export default defineConfig({
   plugins: [react()],
   // Ensure base has trailing slash for proper asset loading
   base: basePath ? `${basePath}/` : '/',
-})
+});
