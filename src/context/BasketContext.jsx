@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import browserStorageAdapter from '../adapters/browserStorageAdapter';
 
 const BasketContext = createContext();
 
@@ -12,12 +13,11 @@ export const useBasket = () => {
 
 export const BasketProvider = ({ children }) => {
   const [items, setItems] = useState(() => {
-    const savedItems = localStorage.getItem('basket');
-    return savedItems ? JSON.parse(savedItems) : [];
+    return browserStorageAdapter.get('basket', []);
   });
 
   useEffect(() => {
-    localStorage.setItem('basket', JSON.stringify(items));
+    browserStorageAdapter.set('basket', items);
   }, [items]);
 
   const addItem = (item) => {
@@ -41,7 +41,7 @@ export const BasketProvider = ({ children }) => {
 
   const clearBasket = () => {
     setItems([]);
-    localStorage.removeItem('basket');
+    browserStorageAdapter.remove('basket');
   };
 
   const getItemCount = () => {

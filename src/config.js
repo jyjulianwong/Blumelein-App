@@ -3,7 +3,7 @@
  */
 
 const config = {
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  apiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL || 'http://localhost:8000',
   stripePublishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
 };
 
@@ -12,14 +12,14 @@ console.log('⚙️ Config loaded:', {
   apiBaseUrl: config.apiBaseUrl,
   stripeKeyPresent: !!config.stripePublishableKey,
   env: {
-    VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+    VITE_SERVER_API_BASE_URL: import.meta.env.VITE_SERVER_API_BASE_URL,
     mode: import.meta.env.MODE,
   }
 });
 
 // Validation
 if (!config.apiBaseUrl) {
-  console.error('VITE_API_BASE_URL is not defined in environment variables');
+  console.error('VITE_SERVER_API_BASE_URL is not defined in environment variables');
 }
 
 if (!config.stripePublishableKey) {
@@ -27,5 +27,4 @@ if (!config.stripePublishableKey) {
 }
 
 export default config;
-
 

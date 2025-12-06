@@ -1,12 +1,12 @@
 /**
- * API Adapter class for handling all backend API calls
+ * Server API Adapter class for handling all backend API calls
  */
-import config from '../utils/config';
+import config from '../config';
 
-class ApiAdapter {
+class ServerApiAdapter {
   constructor() {
     this.baseUrl = config.apiBaseUrl;
-    console.log('🔧 API Adapter initialized with baseUrl:', this.baseUrl);
+    console.log('🔧 Server API Adapter initialized with baseUrl:', this.baseUrl);
   }
 
   /**
@@ -99,6 +99,5 @@ class ApiAdapter {
 }
 
 // Export singleton instance
-export default new ApiAdapter();
-
+export default new ServerApiAdapter();
 

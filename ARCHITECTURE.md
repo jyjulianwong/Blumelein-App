@@ -20,13 +20,15 @@
 │  │              ┌──────────────────────┐                  │  │
 │  │              │  BasketContext       │                  │  │
 │  │              │  (Global State)      │                  │  │
-│  │              └──────────────────────┘                  │  │
-│  │                         │                               │  │
-│  │                         ▼                               │  │
-│  │              ┌──────────────────────┐                  │  │
-│  │              │   API Adapter        │                  │  │
-│  │              │   (Centralized)      │                  │  │
 │  │              └──────────┬───────────┘                  │  │
+│  │                         │                               │  │
+│  │           ┌─────────────┴─────────────┐                │  │
+│  │           ▼                           ▼                │  │
+│  │  ┌────────────────────┐    ┌────────────────────┐    │  │
+│  │  │ Browser Storage    │    │  Server API        │    │  │
+│  │  │ Adapter            │    │  Adapter           │    │  │
+│  │  │ (localStorage)     │    │  (Backend API)     │    │  │
+│  │  └────────────────────┘    └──────────┬─────────┘    │  │
 │  │                         │                               │  │
 │  └─────────────────────────┼───────────────────────────────┘  │
 │                            │                                  │
@@ -93,6 +95,8 @@ App
 │           │   ├── Progress Indicator
 │           │   ├── Step 1: Details Form
 │           │   │   ├── Full Name Input
+│           │   │   ├── Email Input
+│           │   │   ├── Phone Input
 │           │   │   ├── Address Input
 │           │   │   └── Continue Button
 │           │   ├── Step 2: Payment
@@ -155,6 +159,8 @@ User Action (ItemConfigurator)
    │   │   {
    │   │     items: [...],
    │   │     buyer_full_name: "...",
+   │   │     buyer_email: "...",
+   │   │     buyer_phone: "...",
    │   │     delivery_address: "..."
    │   │   }
    │   │   │
@@ -222,22 +228,22 @@ const BasketContext = {
   addItem: (item) => {
     // Add unique ID and timestamp
     // Update state
-    // Save to localStorage
+    // Save to storage via browserStorageAdapter
   },
   
   removeItem: (itemId) => {
     // Remove from state
-    // Update localStorage
+    // Update storage via browserStorageAdapter
   },
   
   updateItem: (itemId, data) => {
     // Update item in state
-    // Update localStorage
+    // Update storage via browserStorageAdapter
   },
   
   clearBasket: () => {
     // Clear state
-    // Clear localStorage
+    // Clear storage via browserStorageAdapter.remove()
   },
   
   getItemCount: () => {
@@ -248,10 +254,15 @@ const BasketContext = {
 
 ## API Integration
 
-### API Adapter Structure
+### Adapter Pattern
+
+The application uses the **Adapter Pattern** to provide consistent interfaces for external interactions:
+
+#### Server API Adapter
+Located in `src/adapters/serverApiAdapter.js`, this handles all backend HTTP requests.
 
 ```javascript
-class ApiAdapter {
+class ServerApiAdapter {
   constructor() {
     this.baseUrl = config.apiBaseUrl;
   }
@@ -283,8 +294,55 @@ class ApiAdapter {
   }
 }
 
-export default new ApiAdapter();  // Singleton
+export default new ServerApiAdapter();  // Singleton
 ```
+
+#### Browser Storage Adapter
+Located in `src/adapters/browserStorageAdapter.js`, this handles all browser storage operations.
+
+```javascript
+class BrowserStorageAdapter {
+  constructor(storageType = 'localStorage') {
+    this.storage = storageType === 'sessionStorage' 
+      ? sessionStorage 
+      : localStorage;
+  }
+  
+  get(key, defaultValue = null) {
+    // Retrieves and parses JSON data
+    // Error handling for invalid JSON
+    // Returns defaultValue if key doesn't exist
+  }
+  
+  set(key, value) {
+    // Stringifies and stores data
+    // Error handling for quota exceeded
+    // Returns success status
+  }
+  
+  remove(key) {
+    // Removes item from storage
+    // Error handling
+  }
+  
+  has(key) {
+    // Check if key exists
+  }
+  
+  clear() {
+    // Clear all storage
+  }
+}
+
+export default new BrowserStorageAdapter('localStorage');  // Singleton
+```
+
+**Benefits of Adapter Pattern:**
+- Centralizes external interactions
+- Easy to mock for testing
+- Consistent error handling
+- Simple to swap implementations (e.g., localStorage → IndexedDB)
+- Type-safe interface for storage operations
 
 ## Configuration Management
 
@@ -293,7 +351,7 @@ export default new ApiAdapter();  // Singleton
 ```
 .env file
     │
-    ├─> VITE_API_BASE_URL=http://localhost:8000
+    ├─> VITE_SERVER_API_BASE_URL=http://localhost:8000
     └─> VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
     │
     ▼
@@ -302,10 +360,10 @@ Vite Build Process
     └─> import.meta.env.VITE_*
     │
     ▼
-src/utils/config.js
+src/config.js
     │
     ├─> const config = {
-    │     apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
+    │     apiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL,
     │     stripePublishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
     │   }
     │
@@ -414,7 +472,7 @@ Build Process
    └─> Gzip compression
 
 3. Caching Strategy
-   ├─> localStorage for basket
+   ├─> browserStorageAdapter for basket (localStorage)
    ├─> Browser caching for static assets
    └─> Consider React Query for API caching
 
@@ -598,7 +656,7 @@ The Blumelein app uses a modern, scalable architecture with:
 
 - **Component-based UI** (React)
 - **Centralized state** (Context API)
-- **Single API client** (API Adapter)
+- **Adapter pattern** (API Adapter + Storage Adapter)
 - **Environment-based config** (.env + config.js)
 - **Modern tooling** (Vite, Tailwind)
 - **Secure payments** (Stripe)

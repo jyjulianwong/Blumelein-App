@@ -1,18 +1,18 @@
-# API Integration Guide
+# Server API Integration Guide
 
 This document explains how the frontend integrates with the Blumelein Server API.
 
 ## API Adapter Architecture
 
-All API calls are centralized in `src/api/apiAdapter.js`, which provides a clean interface for making backend requests.
+All API calls are centralized in `src/adapters/serverApiAdapter.js`, which provides a clean interface for making backend requests.
 
 ### Configuration
 
-The API base URL is configured in `src/utils/config.js`:
+The API base URL is configured in `src/config.js`:
 
 ```javascript
 const config = {
-  apiBaseUrl: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
+  apiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL || 'http://localhost:8000',
   stripePublishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
 };
 ```
@@ -24,7 +24,7 @@ const config = {
 
 **Usage in Code**:
 ```javascript
-import apiAdapter from './api/apiAdapter';
+import serverApiAdapter from './adapters/serverApiAdapter';
 
 const orderData = {
   items: [
@@ -35,10 +35,12 @@ const orderData = {
     }
   ],
   buyer_full_name: 'Jane Smith',
+  buyer_email: 'jane.smith@example.com',
+  buyer_phone: '+1-555-0123',
   delivery_address: '123 Main St, New York, NY 10001'
 };
 
-const response = await apiAdapter.submitOrder(orderData);
+const response = await serverApiAdapter.submitOrder(orderData);
 ```
 
 **Where Used**: `src/pages/CheckoutPage.jsx` (Step 1 of checkout)
@@ -50,7 +52,7 @@ const response = await apiAdapter.submitOrder(orderData);
 
 **Usage in Code**:
 ```javascript
-const order = await apiAdapter.getOrderById(orderId);
+const order = await serverApiAdapter.getOrderById(orderId);
 ```
 
 **Where Used**: `src/pages/OrderSummaryPage.jsx` (Fetching order details after payment)
@@ -68,7 +70,7 @@ const paymentData = {
   currency: 'usd'
 };
 
-const paymentResponse = await apiAdapter.createPaymentIntent(paymentData);
+const paymentResponse = await serverApiAdapter.createPaymentIntent(paymentData);
 // Returns: { client_secret, payment_intent_id, amount, currency }
 ```
 
@@ -85,12 +87,12 @@ const paymentResponse = await apiAdapter.createPaymentIntent(paymentData);
    └─> CheckoutPage.jsx
 
 2. Form submits and creates order
-   └─> apiAdapter.submitOrder(orderData)
+   └─> serverApiAdapter.submitOrder(orderData)
    └─> POST /orders
    └─> Returns { order_id, ... }
 
 3. Create payment intent
-   └─> apiAdapter.createPaymentIntent({ order_id, amount, currency })
+   └─> serverApiAdapter.createPaymentIntent({ order_id, amount, currency })
    └─> POST /payments/create-payment-intent
    └─> Returns { client_secret, ... }
 
@@ -121,9 +123,13 @@ const paymentResponse = await apiAdapter.createPaymentIntent(paymentData);
 {
   items: ItemCreate[];         // Required, min 1 item
   buyer_full_name: string;     // Required, 1-100 chars
+  buyer_email: string;         // Required, 3-254 chars, validated format
+  buyer_phone: string;         // Required, 1-20 chars, E.164 format (e.g., +14155552671)
   delivery_address: string;    // Required, 1-300 chars
 }
 ```
+
+**Note**: The frontend uses `react-phone-number-input` which automatically formats phone numbers in E.164 international format (e.g., `+14155552671`). This format is validated on the client side before submission.
 
 ### OrderResponse
 ```typescript
@@ -131,6 +137,8 @@ const paymentResponse = await apiAdapter.createPaymentIntent(paymentData);
   order_id: string;           // UUID
   items: Item[];              // With item_id and created_at
   buyer_full_name: string;
+  buyer_email: string;
+  buyer_phone: string;
   delivery_address: string;
   payment_status: "Incomplete" | "Completed";
   order_status: "Not Started" | "In Progress" | "Completed";
@@ -184,11 +192,56 @@ async request(endpoint, options = {}) {
 
 ```javascript
 try {
-  const order = await apiAdapter.submitOrder(orderData);
+  const order = await serverApiAdapter.submitOrder(orderData);
   setOrderId(order.order_id);
 } catch (err) {
   console.error('Error submitting order:', err);
   setError(err.message || 'Failed to process order. Please try again.');
+}
+```
+
+## Input Validation
+
+### Phone Number Validation
+
+The frontend uses `react-phone-number-input` library for international phone number validation:
+
+```javascript
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+
+// In the component
+const [buyerPhone, setBuyerPhone] = useState('');
+
+// Validation
+if (!buyerPhone) {
+  setError('Please enter your phone number.');
+  return;
+}
+
+if (!isValidPhoneNumber(buyerPhone)) {
+  setError('Please enter a valid phone number for the selected country.');
+  return;
+}
+
+// Phone is automatically formatted in E.164 format (e.g., +14155552671)
+```
+
+**Features**:
+- Country selector with flag icons
+- Real-time validation as user types
+- Automatic formatting based on selected country
+- Supports all international phone formats
+- Returns phone number in E.164 format for API submission
+
+### Email Validation
+
+Basic email validation using regex:
+
+```javascript
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(buyerEmail.trim())) {
+  setError('Please enter a valid email address.');
+  return;
 }
 ```
 
@@ -236,7 +289,7 @@ import apiAdapter from './src/api/apiAdapter';
 
 // Test API connection
 try {
-  await apiAdapter.healthCheck();
+  await serverApiAdapter.healthCheck();
   console.log('API is healthy');
 } catch (error) {
   console.error('API health check failed:', error);
@@ -255,10 +308,12 @@ const testOrder = {
     }
   ],
   buyer_full_name: 'Test User',
+  buyer_email: 'test@example.com',
+  buyer_phone: '+1-555-0100',
   delivery_address: '123 Test St'
 };
 
-const order = await apiAdapter.submitOrder(testOrder);
+const order = await serverApiAdapter.submitOrder(testOrder);
 console.log('Order created:', order.order_id);
 ```
 
@@ -266,7 +321,7 @@ console.log('Order created:', order.order_id);
 
 ```javascript
 const orderId = 'your-order-id-here';
-const order = await apiAdapter.getOrderById(orderId);
+const order = await serverApiAdapter.getOrderById(orderId);
 console.log('Order details:', order);
 ```
 
@@ -283,19 +338,19 @@ When a payment succeeds:
 
 ### Development
 ```bash
-VITE_API_BASE_URL=http://localhost:8000
+VITE_SERVER_API_BASE_URL=http://localhost:8000
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 ### Staging
 ```bash
-VITE_API_BASE_URL=https://api-staging.example.com
+VITE_SERVER_API_BASE_URL=https://api-staging.example.com
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 ### Production
 ```bash
-VITE_API_BASE_URL=https://api.example.com
+VITE_SERVER_API_BASE_URL=https://api.example.com
 VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...
 ```
 
@@ -312,7 +367,7 @@ VITE_STRIPE_PUBLISHABLE_KEY=pk_live_...
 To add new endpoints:
 
 ```javascript
-// In src/api/apiAdapter.js
+// In src/adapters/serverApiAdapter.js
 
 /**
  * List all orders (admin only)
@@ -334,7 +389,7 @@ async listAllOrders(apiKey) {
 
 **Issue**: "Failed to fetch"
 - Check if backend is running
-- Verify VITE_API_BASE_URL is correct
+- Verify VITE_SERVER_API_BASE_URL is correct
 - Check browser console for CORS errors
 
 **Issue**: 422 Validation Error

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import apiAdapter from '../api/apiAdapter';
+import serverApiAdapter from '../adapters/serverApiAdapter';
 
 const SIZES = {
   S: { label: 'Small', price: 35 },
@@ -24,7 +24,7 @@ const OrderSummaryPage = () => {
       }
 
       try {
-        const orderData = await apiAdapter.getOrderById(orderId);
+        const orderData = await serverApiAdapter.getOrderById(orderId);
         setOrder(orderData);
       } catch (err) {
         console.error('Error fetching order:', err);
@@ -144,9 +144,19 @@ const OrderSummaryPage = () => {
           {/* Delivery Details */}
           <div className="border-b pb-6 mb-6">
             <h2 className="text-lg font-bold text-gray-900 mb-4">Delivery Details</h2>
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="font-medium text-gray-900 mb-2">{order.buyer_full_name}</p>
-              <p className="text-gray-600">{order.delivery_address}</p>
+            <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+              <p className="font-medium text-gray-900">{order.buyer_full_name}</p>
+              {order.buyer_email && (
+                <p className="text-gray-600">
+                  <span className="font-medium">Email:</span> {order.buyer_email}
+                </p>
+              )}
+              {order.buyer_phone && (
+                <p className="text-gray-600">
+                  <span className="font-medium">Phone:</span> {order.buyer_phone}
+                </p>
+              )}
+              <p className="text-gray-600 pt-2">{order.delivery_address}</p>
             </div>
           </div>
 

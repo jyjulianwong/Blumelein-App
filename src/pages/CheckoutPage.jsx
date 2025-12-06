@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import { useBasket } from '../context/BasketContext';
 import PaymentForm from '../components/PaymentForm';
-import apiAdapter from '../api/apiAdapter';
-import config from '../utils/config';
+import serverApiAdapter from '../adapters/serverApiAdapter';
+import config from '../config';
 
 // Initialize Stripe
 console.log('🔑 Initializing Stripe with key:', config.stripePublishableKey?.substring(0, 20) + '...');
@@ -26,6 +28,8 @@ const CheckoutPage = () => {
 
   // Form state
   const [buyerFullName, setBuyerFullName] = useState('');
+  const [buyerEmail, setBuyerEmail] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   
   // Order and payment state
@@ -43,6 +47,29 @@ const CheckoutPage = () => {
     
     if (!buyerFullName.trim()) {
       setError('Please enter your full name.');
+      return;
+    }
+    
+    if (!buyerEmail.trim()) {
+      setError('Please enter your email address.');
+      return;
+    }
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(buyerEmail.trim())) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+    
+    if (!buyerPhone) {
+      setError('Please enter your phone number.');
+      return;
+    }
+    
+    // Validate phone number using libphonenumber-js
+    if (!isValidPhoneNumber(buyerPhone)) {
+      setError('Please enter a valid phone number for the selected country.');
       return;
     }
     
@@ -68,15 +95,17 @@ const CheckoutPage = () => {
           comments: item.comments,
         })),
         buyer_full_name: buyerFullName.trim(),
+        buyer_email: buyerEmail.trim(),
+        buyer_phone: buyerPhone, // Already in E.164 format
         delivery_address: deliveryAddress.trim(),
       };
 
-      const orderResponse = await apiAdapter.submitOrder(orderData);
+      const orderResponse = await serverApiAdapter.submitOrder(orderData);
       setOrderId(orderResponse.order_id);
 
       // Step 2: Create payment intent
       const totalInCents = Math.round(calculateTotal() * 100);
-      const paymentResponse = await apiAdapter.createPaymentIntent({
+      const paymentResponse = await serverApiAdapter.createPaymentIntent({
         order_id: orderResponse.order_id,
         amount: totalInCents,
         currency: 'usd',
@@ -172,6 +201,45 @@ const CheckoutPage = () => {
                     </div>
 
                     <div>
+                      <label htmlFor="buyerEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        id="buyerEmail"
+                        value={buyerEmail}
+                        onChange={(e) => setBuyerEmail(e.target.value)}
+                        maxLength={254}
+                        required
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        placeholder="john.doe@example.com"
+                        aria-label="Email address"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="buyerPhone" className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number *
+                      </label>
+                      <PhoneInput
+                        id="buyerPhone"
+                        international
+                        defaultCountry="US"
+                        value={buyerPhone}
+                        onChange={setBuyerPhone}
+                        className="phone-input-custom"
+                        placeholder="Enter phone number"
+                        aria-label="Phone number"
+                        error={buyerPhone ? (isValidPhoneNumber(buyerPhone) ? undefined : 'Invalid phone number') : undefined}
+                      />
+                      {buyerPhone && !isValidPhoneNumber(buyerPhone) && (
+                        <p className="mt-1 text-sm text-red-600">
+                          Please enter a valid phone number for the selected country.
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
                       <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700 mb-2">
                         Delivery Address *
                       </label>
@@ -260,11 +328,13 @@ const CheckoutPage = () => {
               {step === 1 && buyerFullName && deliveryAddress && (
                 <div className="border-t pt-4 text-sm text-gray-600">
                   <div className="mb-2">
-                    <span className="font-medium">Delivering to:</span>
+                    <span className="font-medium">Delivery Information:</span>
                   </div>
-                  <div className="bg-gray-50 p-3 rounded">
+                  <div className="bg-gray-50 p-3 rounded space-y-1">
                     <p className="font-medium text-gray-900">{buyerFullName}</p>
-                    <p className="mt-1">{deliveryAddress}</p>
+                    {buyerEmail && <p>{buyerEmail}</p>}
+                    {buyerPhone && <p>{buyerPhone}</p>}
+                    <p className="mt-2">{deliveryAddress}</p>
                   </div>
                 </div>
               )}

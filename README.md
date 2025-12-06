@@ -1,4 +1,4 @@
-# Blumelein - Flower Shop Web App
+# Blumelein App
 
 A beautiful and modern flower shop web application built with React, Tailwind CSS, and Stripe payment integration.
 
@@ -71,7 +71,7 @@ Manage your order with full control:
 - **Order Summary**: Sticky sidebar with pricing details
 - **Empty State**: Helpful message when basket is empty
 - **Trust Indicators**: Security badges (Secure Payment, Free Delivery, Freshness Guaranteed)
-- **Persistent Storage**: Uses localStorage to save basket between sessions
+- **Persistent Storage**: Uses browserStorageAdapter (localStorage) to save basket between sessions
 
 **User Experience**:
 - Visual item cards with bouquet emoji
@@ -88,6 +88,12 @@ Two-step secure checkout process:
 
 #### Step 1: Delivery Details
 - **Full Name**: Required field (1-100 characters)
+- **Email Address**: Required field with validation (3-254 characters)
+- **Phone Number**: International phone input with country selector and validation
+  - Country selector with flags
+  - Real-time phone number validation
+  - Format validation based on selected country
+  - Supports all international phone formats
 - **Delivery Address**: Required textarea (1-300 characters)
 - **Order Summary**: Sidebar with complete pricing
 - **Validation**: Client-side validation before proceeding
@@ -136,6 +142,10 @@ Complete order details after payment:
 
 - **Frontend**: React 18, React Router DOM
 - **Styling**: Tailwind CSS
+- **Payment**: Stripe (@stripe/react-stripe-js, @stripe/stripe-js)
+- **Phone Validation**: react-phone-number-input (with libphonenumber-js)
+- **Build Tool**: Vite
+- **Routing**: React Router v6
 - **Payment**: Stripe (React Stripe.js)
 - **Build Tool**: Vite
 - **State Management**: React Context API
@@ -171,7 +181,8 @@ cp .env.example .env
 
 Edit `.env`:
 ```
-VITE_API_BASE_URL=http://localhost:8000
+VITE_CLIENT_BASE_PATH=/Blumelein-App
+VITE_SERVER_API_BASE_URL=http://localhost:8000
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_key_here
 ```
 
@@ -194,8 +205,9 @@ npm run build
 ```
 Blumelein-App/
 ├── src/
-│   ├── api/
-│   │   └── apiAdapter.js          # Centralized API client
+│   ├── adapters/
+│   │   ├── serverApiAdapter.js    # Centralized API client
+│   │   └── browserStorageAdapter.js # Browser storage operations
 │   ├── components/
 │   │   ├── Header.jsx             # Navigation header
 │   │   ├── ItemConfigurator.jsx   # Bouquet configuration form
@@ -209,7 +221,7 @@ Blumelein-App/
 │   │   ├── CheckoutPage.jsx       # Checkout and payment
 │   │   └── OrderSummaryPage.jsx   # Order confirmation
 │   ├── utils/
-│   │   └── config.js              # Environment configuration
+│   ├── config.js                  # Environment configuration
 │   ├── App.jsx                    # Main app component with routing
 │   ├── main.jsx                   # App entry point
 │   └── index.css                  # Global styles
@@ -230,7 +242,7 @@ Blumelein-App/
 
 ## API Integration
 
-The app integrates with the Blumelein Server API for order management and payment processing. All API calls are centralized in `src/api/apiAdapter.js` for easy maintenance.
+The app integrates with the Blumelein Server API for order management and payment processing. All API calls are centralized in `src/adapters/serverApiAdapter.js` for easy maintenance.
 
 ### Endpoints
 
@@ -243,20 +255,22 @@ The app integrates with the Blumelein Server API for order management and paymen
 ### API Adapter Usage
 
 ```javascript
-import apiAdapter from './api/apiAdapter';
+import serverApiAdapter from './adapters/serverApiAdapter';
 
 // Submit order
-const order = await apiAdapter.submitOrder({
+const order = await serverApiAdapter.submitOrder({
   items: [...],
   buyer_full_name: "John Doe",
+  buyer_email: "john.doe@example.com",
+  buyer_phone: "+1-555-0123",
   delivery_address: "123 Main St"
 });
 
 // Get order by ID
-const order = await apiAdapter.getOrderById(orderId);
+const order = await serverApiAdapter.getOrderById(orderId);
 
 // Create payment intent
-const paymentIntent = await apiAdapter.createPaymentIntent({
+const paymentIntent = await serverApiAdapter.createPaymentIntent({
   order_id: orderId,
   amount: 5500,
   currency: "usd"
@@ -276,6 +290,8 @@ const paymentIntent = await apiAdapter.createPaymentIntent({
     }
   ],
   "buyer_full_name": "Jane Smith",
+  "buyer_email": "jane.smith@example.com",
+  "buyer_phone": "+1-555-0123",
   "delivery_address": "123 Main St, New York, NY 10001"
 }
 ```
@@ -295,13 +311,14 @@ const paymentIntent = await apiAdapter.createPaymentIntent({
 
 All configuration is managed through environment variables in `.env`:
 
-- `VITE_API_BASE_URL`: Backend API base URL (e.g., `http://localhost:8000`)
+- `VITE_CLIENT_BASE_PATH`: Base path for the application (e.g., `/Blumelein-App` for GitHub Pages, `/` or empty for root domain)
+- `VITE_SERVER_API_BASE_URL`: Backend API base URL (e.g., `http://localhost:8000`)
 - `VITE_STRIPE_PUBLISHABLE_KEY`: Stripe publishable key (starts with `pk_test_`)
 
-These are loaded into `src/utils/config.js` as constants:
+These are loaded into `src/config.js` as constants:
 
 ```javascript
-import config from './utils/config';
+import config from './config';
 
 console.log(config.apiBaseUrl);
 console.log(config.stripePublishableKey);
@@ -410,6 +427,8 @@ Use these test card numbers in development:
    - Go to checkout
    - Enter delivery details:
      - Full Name: `Test User`
+     - Email: `test@example.com`
+     - Phone: Select country and enter valid phone number (e.g., US: `(555) 123-4567`)
      - Delivery Address: `123 Test St, Test City, TC 12345`
    - Wait for payment form to load
    - Console should show: `✅ Payment Element is ready`
@@ -598,7 +617,7 @@ The app follows accessibility best practices:
 **Cause**: Backend not running or CORS issues
 
 **Solution**:
-- Check backend is running at `VITE_API_BASE_URL`
+- Check backend is running at `VITE_SERVER_API_BASE_URL`
 - Verify CORS settings on backend allow `http://localhost:5173`
 - Check Network tab in DevTools for error details
 
@@ -678,8 +697,22 @@ This creates an optimized production build in the `dist/` folder.
 ### Environment Variables in Production
 
 Make sure to set these in your hosting platform:
-- `VITE_API_BASE_URL`: Your production API URL
+- `VITE_CLIENT_BASE_PATH`: Base path for your deployment (e.g., `/repository-name` for GitHub Pages, `/` or empty for root domain)
+- `VITE_SERVER_API_BASE_URL`: Your production API URL
 - `VITE_STRIPE_PUBLISHABLE_KEY`: Your live Stripe key (starts with `pk_live_`)
+
+#### Setting up GitHub Secrets
+
+For GitHub Pages deployment, add these secrets to your repository:
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Secrets and variables** → **Actions**
+3. Click **New repository secret** and add:
+   - Name: `VITE_CLIENT_BASE_PATH`, Value: `/Blumelein-App` (or your repository name)
+   - Name: `VITE_SERVER_API_BASE_URL`, Value: Your production API URL
+   - Name: `VITE_STRIPE_PUBLISHABLE_KEY`, Value: Your Stripe publishable key
+
+These secrets are automatically used during the GitHub Actions build process as defined in `.github/workflows/build-deploy.yml`.
 
 ### Deployment Checklist
 
@@ -731,7 +764,7 @@ Make sure to set these in your hosting platform:
 
 - ES6+ JavaScript
 - Fetch API
-- localStorage
+- Storage Adapter Pattern
 - CSS Grid & Flexbox
 - Custom Properties (CSS Variables)
 
@@ -782,11 +815,3 @@ For issues or questions, refer to:
 - [Tailwind CSS Docs](https://tailwindcss.com)
 - [Stripe React Integration](https://stripe.com/docs/stripe-js/react)
 - [Vite Guide](https://vitejs.dev/guide/)
-
-## License
-
-This project is proprietary software.
-
----
-
-**Built with ❤️ using React, Tailwind CSS, and Stripe**

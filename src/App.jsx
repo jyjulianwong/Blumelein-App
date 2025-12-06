@@ -7,8 +7,11 @@ import CheckoutPage from './pages/CheckoutPage';
 import OrderSummaryPage from './pages/OrderSummaryPage';
 
 const App = () => {
+  // BrowserRouter basename should NOT have trailing slash
+  const basename = import.meta.env.VITE_CLIENT_BASE_PATH || '';
+  
   return (
-    <Router>
+    <Router basename={basename}>
       <BasketProvider>
         <div className="min-h-screen bg-gray-50">
           <Header />

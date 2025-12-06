@@ -23,9 +23,10 @@ npm run lint
 
 | File | Purpose |
 |------|---------|
-| `.env` | Environment variables (API URL, Stripe key) |
-| `src/utils/config.js` | Configuration loader |
-| `src/api/apiAdapter.js` | All API calls |
+| `.env` | Environment variables (base path, API URL, Stripe key) |
+| `src/config.js` | Configuration loader |
+| `src/adapters/serverApiAdapter.js` | All API calls |
+| `src/adapters/browserStorageAdapter.js` | Browser storage operations |
 | `src/context/BasketContext.jsx` | Shopping basket state |
 | `src/App.jsx` | Main app with routing |
 
@@ -43,7 +44,7 @@ npm run lint
 ```javascript
 // Submit order
 POST /orders
-Body: { items, buyer_full_name, delivery_address }
+Body: { items, buyer_full_name, buyer_email, buyer_phone, delivery_address }
 
 // Get order
 GET /orders/{order_id}
@@ -64,9 +65,12 @@ Body: { order_id, amount, currency }
 ## Environment Variables
 
 ```bash
-VITE_API_BASE_URL=http://localhost:8000
+VITE_CLIENT_BASE_PATH=/Blumelein-App
+VITE_SERVER_API_BASE_URL=http://localhost:8000
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
+
+> **Note**: `VITE_CLIENT_BASE_PATH` should not have a trailing slash. It's used for routing (e.g., `/Blumelein-App` for GitHub Pages, `/` for root domain).
 
 ## Common Tasks
 
@@ -98,7 +102,7 @@ colors: {
 ```
 
 ### Add API Endpoint
-In `src/api/apiAdapter.js`:
+In `src/adapters/serverApiAdapter.js`:
 
 ```javascript
 async myNewEndpoint(data) {
@@ -123,7 +127,7 @@ Use any future expiry and any CVC.
 
 ### "Failed to fetch"
 - Check backend is running
-- Verify `VITE_API_BASE_URL` in `.env`
+- Verify `VITE_SERVER_API_BASE_URL` in `.env`
 - Check CORS settings on backend
 
 ### Payment Not Working
@@ -148,8 +152,9 @@ npm run build
 
 ```
 src/
-├── api/
-│   └── apiAdapter.js       # API client
+├── adapters/
+│   ├── serverApiAdapter.js       # API client
+│   └── browserStorageAdapter.js   # Browser storage
 ├── components/
 │   ├── Header.jsx          # Navigation
 │   ├── ItemConfigurator.jsx # Bouquet builder
@@ -163,7 +168,7 @@ src/
 │   ├── CheckoutPage.jsx    # Checkout flow
 │   └── OrderSummaryPage.jsx # Confirmation
 ├── utils/
-│   └── config.js           # Config loader
+├── config.js               # Config loader
 ├── App.jsx                 # Router setup
 ├── main.jsx                # Entry point
 └── index.css               # Global styles
@@ -177,6 +182,7 @@ src/
 | react-router-dom | Routing |
 | @stripe/react-stripe-js | Stripe integration |
 | @stripe/stripe-js | Stripe SDK |
+| react-phone-number-input | International phone validation |
 | tailwindcss | Styling |
 
 ## Component Props
@@ -217,19 +223,40 @@ const {
 } = useBasket();
 ```
 
-## API Adapter Usage
+## Server API Adapter Usage
 
 ```javascript
-import apiAdapter from './api/apiAdapter';
+import serverApiAdapter from './adapters/serverApiAdapter';
 
 // Submit order
-const order = await apiAdapter.submitOrder(orderData);
+const order = await serverApiAdapter.submitOrder(orderData);
 
 // Get order
-const order = await apiAdapter.getOrderById(orderId);
+const order = await serverApiAdapter.getOrderById(orderId);
 
 // Create payment
-const payment = await apiAdapter.createPaymentIntent(paymentData);
+const payment = await serverApiAdapter.createPaymentIntent(paymentData);
+```
+
+## Browser Storage Adapter Usage
+
+```javascript
+import browserStorageAdapter from './adapters/browserStorageAdapter';
+
+// Store data
+browserStorageAdapter.set('basket', items);
+
+// Retrieve data
+const items = browserStorageAdapter.get('basket', []);
+
+// Remove data
+browserStorageAdapter.remove('basket');
+
+// Check if exists
+if (browserStorageAdapter.has('basket')) { ... }
+
+// Clear all
+browserStorageAdapter.clear();
 ```
 
 ## Styling Guidelines
@@ -293,7 +320,7 @@ netlify deploy --prod --dir=dist
 
 ### Environment Variables (Production)
 Set these in your hosting platform:
-- `VITE_API_BASE_URL`
+- `VITE_SERVER_API_BASE_URL`
 - `VITE_STRIPE_PUBLISHABLE_KEY`
 
 ## Support Resources
