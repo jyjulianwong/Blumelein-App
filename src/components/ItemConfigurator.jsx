@@ -61,7 +61,7 @@ const ItemConfigurator = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 md:p-8">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Create Your Custom Bouquet</h2>
+      <h2 className="text-2xl font-handwriting text-gray-900 mb-6">Create Your Custom Bouquet</h2>
       
       {/* Size Selection */}
       <div className="mb-8">

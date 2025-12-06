@@ -84,7 +84,7 @@ const OrderSummaryPage = () => {
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <div className="text-6xl mb-4">❌</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Order Not Found</h2>
+            <h2 className="text-2xl font-handwriting text-gray-900 mb-4">Order Not Found</h2>
             <p className="text-gray-600 mb-8">{error || 'We could not find your order.'}</p>
             <Link
               to="/"
@@ -116,7 +116,7 @@ const OrderSummaryPage = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
+          <h1 className="text-3xl font-handwriting text-gray-900 mb-2">Order Confirmed!</h1>
           <p className="text-gray-600">
             Thank you for your order. We'll start preparing your beautiful bouquets right away.
           </p>
@@ -161,7 +161,7 @@ const OrderSummaryPage = () => {
 
           {/* Delivery Details */}
           <div className="border-b pb-6 mb-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Delivery Details</h2>
+            <h2 className="text-lg font-handwriting text-gray-900 mb-4">Delivery Details</h2>
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <p className="font-medium text-gray-900">{order.buyer_full_name}</p>
               {order.buyer_email && (
@@ -180,15 +180,15 @@ const OrderSummaryPage = () => {
 
           {/* Order Items */}
           <div className="mb-6">
-            <h2 className="text-lg font-bold text-gray-900 mb-4">Order Items</h2>
+            <h2 className="text-lg font-handwriting text-gray-900 mb-4">Order Items</h2>
             <div className="space-y-4">
               {order.items.map((item, index) => (
                 <div key={item.item_id} className="bg-gray-50 p-4 rounded-lg">
-                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center space-x-2">
                       <span className="text-2xl" role="img" aria-label="bouquet">💐</span>
                       <div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-handwriting text-lg text-gray-900">
                           Bouquet #{index + 1} - {SIZES[item.size]?.label}
                         </h3>
                       </div>
@@ -264,7 +264,7 @@ const OrderSummaryPage = () => {
 
         {/* Additional Info */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h3 className="font-semibold text-gray-900 mb-2">What happens next?</h3>
+          <h3 className="font-handwriting text-lg text-gray-900 mb-2">What happens next?</h3>
           <ul className="space-y-2 text-sm text-gray-600">
             <li className="flex items-start">
               <span className="mr-2">✓</span>
@@ -283,7 +283,7 @@ const OrderSummaryPage = () => {
 
         {/* Contact Information */}
         <div className="mt-6 bg-white border border-gray-200 rounded-lg p-6">
-          <h3 className="font-semibold text-gray-900 mb-3">Need Help?</h3>
+          <h3 className="font-handwriting text-lg text-gray-900 mb-3">Need Help?</h3>
           <p className="text-sm text-gray-600 mb-4">{SUPPORT_MESSAGES.orderInquiries}</p>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">

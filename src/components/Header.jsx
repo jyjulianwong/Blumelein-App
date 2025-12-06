@@ -11,7 +11,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <span className="text-3xl" role="img" aria-label="flower">🌸</span>
-            <h1 className="text-2xl font-bold text-primary-600">Blumelein</h1>
+            <h1 className="text-2xl font-handwriting text-primary-600">Blumelein</h1>
           </Link>
           
           <nav className="flex items-center space-x-6">

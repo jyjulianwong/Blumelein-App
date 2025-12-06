@@ -41,7 +41,7 @@ const BasketPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <div className="text-6xl mb-4">🛒</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Basket is Empty</h2>
+            <h2 className="text-2xl font-handwriting text-gray-900 mb-4">Your Basket is Empty</h2>
             <p className="text-gray-600 mb-8">
               Start creating your perfect bouquet to add items to your basket.
             </p>
@@ -67,7 +67,7 @@ const BasketPage = () => {
       <SEO {...seoConfig} />
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Basket</h1>
+        <h1 className="text-3xl font-handwriting text-gray-900 mb-8">Your Basket</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Items List */}
@@ -80,7 +80,7 @@ const BasketPage = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+              <h2 className="text-xl font-handwriting text-gray-900 mb-6">Order Summary</h2>
               
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between text-gray-600">

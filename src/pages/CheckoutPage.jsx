@@ -150,7 +150,7 @@ const CheckoutPage = () => {
       <SEO {...seoConfig} />
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
+        <h1 className="text-3xl font-handwriting text-gray-900 mb-8">Checkout</h1>
 
         {/* Progress Indicator */}
         <div className="mb-8">
@@ -186,7 +186,7 @@ const CheckoutPage = () => {
           <div className="lg:col-span-2">
             {step === 1 && (
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Delivery Details</h2>
+                <h2 className="text-xl font-handwriting text-gray-900 mb-6">Delivery Details</h2>
                 <form onSubmit={handleSubmitDetails}>
                   <div className="space-y-4">
                     <div>
@@ -287,7 +287,7 @@ const CheckoutPage = () => {
             {step === 2 && clientSecret && (
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900">Payment</h2>
+                  <h2 className="text-xl font-handwriting text-gray-900">Payment</h2>
                   <button
                     type="button"
                     onClick={handleBackToDetails}
@@ -310,7 +310,7 @@ const CheckoutPage = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-md p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Order Summary</h2>
+              <h2 className="text-xl font-handwriting text-gray-900 mb-4">Order Summary</h2>
               
               <div className="space-y-3 mb-4">
                 {items.map((item, index) => (

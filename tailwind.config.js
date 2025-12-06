@@ -20,6 +20,10 @@ export default {
           900: '#831843',
         },
       },
+      fontFamily: {
+        'display': ['"IBM Plex Serif"', 'serif'],
+        'handwriting': ['"The Girl Next Door"', 'cursive'],
+      },
     },
   },
   plugins: [],
