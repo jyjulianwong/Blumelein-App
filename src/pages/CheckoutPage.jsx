@@ -8,6 +8,7 @@ import { useBasket } from '../context/BasketContext';
 import PaymentForm from '../components/PaymentForm';
 import serverApiAdapter from '../adapters/serverApiAdapter';
 import config from '../config';
+import { POLICIES } from '../constants';
 
 // Initialize Stripe
 console.log('🔑 Initializing Stripe with key:', config.stripePublishableKey?.substring(0, 20) + '...');
@@ -254,6 +255,15 @@ const CheckoutPage = () => {
                         placeholder="123 Main St, New York, NY 10001"
                         aria-label="Delivery address"
                       />
+                      <div className="mt-2 flex items-start bg-blue-50 border border-blue-200 rounded-lg p-3">
+                        <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div className="text-sm">
+                          <p className="font-medium text-blue-900 mb-1">{POLICIES.deliveryRestriction.title}</p>
+                          <p className="text-blue-800">{POLICIES.deliveryRestriction.message}</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
