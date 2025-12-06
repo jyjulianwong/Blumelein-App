@@ -1,8 +1,14 @@
 import ItemConfigurator from '../components/ItemConfigurator';
+import SEO from '../components/SEO';
+import { getSEOConfig } from '../config/seoConfig';
 
 const HomePage = () => {
+  const seoConfig = getSEOConfig('home');
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <>
+      <SEO {...seoConfig} />
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
         <div className="text-center mb-12">
@@ -44,6 +50,7 @@ const HomePage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

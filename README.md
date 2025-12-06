@@ -144,10 +144,9 @@ Complete order details after payment:
 - **Styling**: Tailwind CSS
 - **Payment**: Stripe (@stripe/react-stripe-js, @stripe/stripe-js)
 - **Phone Validation**: react-phone-number-input (with libphonenumber-js)
+- **SEO**: react-helmet-async (dynamic meta tags and structured data)
 - **Build Tool**: Vite
 - **Routing**: React Router v6
-- **Payment**: Stripe (React Stripe.js)
-- **Build Tool**: Vite
 - **State Management**: React Context API
 
 ## Quick Start
@@ -212,7 +211,10 @@ Blumelein-App/
 │   │   ├── Header.jsx             # Navigation header
 │   │   ├── ItemConfigurator.jsx   # Bouquet configuration form
 │   │   ├── BasketItem.jsx         # Individual basket item
-│   │   └── PaymentForm.jsx        # Stripe payment form
+│   │   ├── PaymentForm.jsx        # Stripe payment form
+│   │   └── SEO.jsx                # SEO meta tags component
+│   ├── config/
+│   │   └── seoConfig.js           # SEO configuration
 │   ├── context/
 │   │   └── BasketContext.jsx      # Shopping basket state management
 │   ├── pages/
@@ -225,12 +227,17 @@ Blumelein-App/
 │   ├── App.jsx                    # Main app component with routing
 │   ├── main.jsx                   # App entry point
 │   └── index.css                  # Global styles
+├── public/
+│   ├── robots.txt                 # Search engine crawler directives
+│   └── sitemap.xml                # Site structure for SEO
 ├── .env                           # Environment variables (not committed)
 ├── .env.example                   # Template for env vars
 ├── package.json                   # Dependencies
 ├── vite.config.js                 # Vite configuration
 ├── tailwind.config.js             # Tailwind theme
-└── postcss.config.js              # PostCSS configuration
+├── postcss.config.js              # PostCSS configuration
+├── SEO_GUIDE.md                   # Complete SEO documentation (quick reference + comprehensive guide)
+└── README.md                      # This file
 ```
 
 ### Available Scripts
@@ -810,7 +817,13 @@ These secrets are automatically used during the GitHub Actions build process as 
 
 ## Support
 
-For issues or questions, refer to:
+For detailed documentation on specific topics:
+- **SEO Implementation**: See [SEO_GUIDE.md](./SEO_GUIDE.md) - Complete SEO documentation with quick reference and comprehensive guide
+- **API Integration**: See [SERVER_API_INTEGRATION.md](./SERVER_API_INTEGRATION.md) for API details
+- **Base Path Configuration**: See [BASE_PATH_CONFIG.md](./BASE_PATH_CONFIG.md) for deployment paths
+- **Storage Adapter**: See [BROWSER_STORAGE_ADAPTER.md](./BROWSER_STORAGE_ADAPTER.md) for local storage
+
+For technical support:
 - [React Documentation](https://react.dev)
 - [Tailwind CSS Docs](https://tailwindcss.com)
 - [Stripe React Integration](https://stripe.com/docs/stripe-js/react)

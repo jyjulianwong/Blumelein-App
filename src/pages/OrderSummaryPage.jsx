@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import serverApiAdapter from '../adapters/serverApiAdapter';
 import { CONTACT_INFO, SUPPORT_MESSAGES } from '../constants';
+import SEO from '../components/SEO';
+import { getSEOConfig, generateOrderStructuredData } from '../config/seoConfig';
 
 const SIZES = {
   S: { label: 'Small', price: 35 },
@@ -56,6 +58,15 @@ const OrderSummaryPage = () => {
     });
   };
 
+  const seoConfig = getSEOConfig('orderSummary');
+  const orderStructuredData = order ? generateOrderStructuredData({
+    orderId: order.orderId,
+    orderDate: order.createdAt,
+    customerName: order.buyerFullName,
+    customerEmail: order.buyerEmail,
+    totalAmount: calculateTotal(),
+  }) : null;
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 flex items-center justify-center">
@@ -90,7 +101,13 @@ const OrderSummaryPage = () => {
   const total = calculateTotal();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <>
+      <SEO 
+        {...seoConfig} 
+        title={`Order #${order.orderId.substring(0, 8)} Confirmation`}
+        structuredData={orderStructuredData}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Success Header */}
         <div className="text-center mb-8">
@@ -321,6 +338,7 @@ const OrderSummaryPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

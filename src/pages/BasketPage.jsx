@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useBasket } from '../context/BasketContext';
 import BasketItem from '../components/BasketItem';
+import SEO from '../components/SEO';
+import { getSEOConfig } from '../config/seoConfig';
 
 const SIZES = {
   S: { price: 35 },
@@ -11,6 +13,7 @@ const SIZES = {
 const BasketPage = () => {
   const navigate = useNavigate();
   const { items, removeItem } = useBasket();
+  const seoConfig = getSEOConfig('basket');
 
   const calculateTotal = () => {
     return items.reduce((total, item) => {
@@ -32,7 +35,9 @@ const BasketPage = () => {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+      <>
+        <SEO {...seoConfig} />
+        <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <div className="text-6xl mb-4">🛒</div>
@@ -51,13 +56,16 @@ const BasketPage = () => {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
   const total = calculateTotal();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <>
+      <SEO {...seoConfig} />
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Your Basket</h1>
 
@@ -133,6 +141,7 @@ const BasketPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

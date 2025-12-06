@@ -9,6 +9,8 @@ import PaymentForm from '../components/PaymentForm';
 import serverApiAdapter from '../adapters/serverApiAdapter';
 import config from '../config';
 import { POLICIES } from '../constants';
+import SEO from '../components/SEO';
+import { getSEOConfig } from '../config/seoConfig';
 
 // Initialize Stripe
 console.log('🔑 Initializing Stripe with key:', config.stripePublishableKey?.substring(0, 20) + '...');
@@ -26,6 +28,7 @@ const CheckoutPage = () => {
   const [step, setStep] = useState(1); // 1: Details, 2: Payment
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const seoConfig = getSEOConfig('checkout');
 
   // Form state
   const [buyerFullName, setBuyerFullName] = useState('');
@@ -143,7 +146,9 @@ const CheckoutPage = () => {
   const total = calculateTotal();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
+    <>
+      <SEO {...seoConfig} />
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">Checkout</h1>
 
@@ -353,6 +358,7 @@ const CheckoutPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

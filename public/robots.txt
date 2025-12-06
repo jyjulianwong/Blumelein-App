@@ -1,0 +1,13 @@
+# robots.txt for Blumelein
+# https://www.robotstxt.org/robotstxt.html
+
+User-agent: *
+Allow: /
+
+# Disallow checkout and order pages from being indexed
+Disallow: /checkout
+Disallow: /order-summary/
+
+# Sitemap location
+Sitemap: /sitemap.xml
+
