@@ -5,10 +5,11 @@ import HomePage from './pages/HomePage';
 import BasketPage from './pages/BasketPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSummaryPage from './pages/OrderSummaryPage';
+import config from './config';
 
 const App = () => {
   // BrowserRouter basename should NOT have trailing slash
-  const basename = import.meta.env.VITE_CLIENT_BASE_PATH || '';
+  const basename = config.clientBasePath;
   
   return (
     <Router basename={basename}>

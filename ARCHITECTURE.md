@@ -264,7 +264,7 @@ Located in `src/adapters/serverApiAdapter.js`, this handles all backend HTTP req
 ```javascript
 class ServerApiAdapter {
   constructor() {
-    this.baseUrl = config.apiBaseUrl;
+    this.baseUrl = config.serverApiBaseUrl;
   }
   
   async request(endpoint, options) {
@@ -363,14 +363,14 @@ Vite Build Process
 src/config.js
     │
     ├─> const config = {
-    │     apiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL,
+    │     serverApiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL,
     │     stripePublishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
     │   }
     │
     ▼
 Used throughout application
     │
-    ├─> API Adapter (apiBaseUrl)
+    ├─> API Adapter (serverApiBaseUrl)
     └─> Stripe initialization (stripePublishableKey)
 ```
 

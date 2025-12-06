@@ -320,7 +320,7 @@ These are loaded into `src/config.js` as constants:
 ```javascript
 import config from './config';
 
-console.log(config.apiBaseUrl);
+console.log(config.serverApiBaseUrl);
 console.log(config.stripePublishableKey);
 ```
 
@@ -440,7 +440,7 @@ Use these test card numbers in development:
 ### Expected Console Logs (Successful Flow)
 
 ```
-⚙️ Config loaded: { apiBaseUrl: "http://localhost:8000", ... }
+⚙️ Config loaded: { serverApiBaseUrl: "http://localhost:8000", ... }
 🔧 API Adapter initialized with baseUrl: http://localhost:8000
 🔑 Initializing Stripe with key: pk_test_...
 

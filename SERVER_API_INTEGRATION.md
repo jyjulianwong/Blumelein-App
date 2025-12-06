@@ -12,7 +12,7 @@ The API base URL is configured in `src/config.js`:
 
 ```javascript
 const config = {
-  apiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL || 'http://localhost:8000',
+  serverApiBaseUrl: import.meta.env.VITE_SERVER_API_BASE_URL || 'http://localhost:8000',
   stripePublishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '',
 };
 ```
@@ -408,7 +408,7 @@ Add this to your component for debugging:
 
 ```javascript
 useEffect(() => {
-  console.log('API Base URL:', config.apiBaseUrl);
+  console.log('API Base URL:', config.serverApiBaseUrl);
   console.log('Stripe Key:', config.stripePublishableKey.substring(0, 10) + '...');
 }, []);
 ```

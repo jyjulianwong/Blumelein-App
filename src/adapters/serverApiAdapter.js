@@ -5,7 +5,7 @@ import config from '../config';
 
 class ServerApiAdapter {
   constructor() {
-    this.baseUrl = config.apiBaseUrl;
+    this.baseUrl = config.serverApiBaseUrl;
     console.log('🔧 Server API Adapter initialized with baseUrl:', this.baseUrl);
   }
 
